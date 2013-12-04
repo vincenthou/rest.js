@@ -1,0 +1,22 @@
+<html>
+	<head>
+		<title>TestAPI</title>
+	</head>
+	<body>
+		<ul id="names" class="name-list">
+		</ul>
+	    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+		<script type="text/javascript" src="rest.js"></script>
+		<script type="text/javascript">
+			$(function(){
+				rest.get('list.json', function(data){
+					var $wrapper = $('#names');
+					console.log(arguments[0]);
+					data.forEach(function(elem, index, arr){
+						$wrapper.append('<li class="name">' + elem.name + '</li>');
+					});
+				});
+			});
+		</script>
+	</body>
+</html>
