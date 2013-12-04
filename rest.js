@@ -20,9 +20,9 @@
                 okCallback = data;
                 data = {};
             }
-            $.getJSON(url, data, function(){
-                okCallback(arguments);
-                rest.after(arguments);
+            $.getJSON(url, data, function(data, textStatus, jqXHR){
+                okCallback(data, textStatus, jqXHR);
+                rest.after(data, textStatus, jqXHR);
             });
         };
         rest.post = rest.put = rest.del = rest.get;
@@ -39,8 +39,8 @@
                     }
                     ('del' === methodName) && (methodName = 'delete');
                     if (!failCallback) {
-                        failCallback = function() {
-                            console.error(arguments);
+                        failCallback = function(jqXHR, textStatus, errorThrown) {
+                            console.error(jqXHR, textStatus, errorThrown);
                         };
                     }
                     rest.before(arguments);
