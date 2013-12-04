@@ -1,0 +1,62 @@
+(function(w){
+    var rest = {};
+    rest.methods = ['get', 'post', 'put', 'del'];
+    rest.offline = true;
+    rest.before = function(params) {
+        //TODO
+        console.log('sentData', params);
+    };
+
+    rest.after = function(params) {
+        //TODO
+        console.log('gotData', params);
+    };
+
+    if (rest.offline) {
+        rest.get = function(url, data, okCallback, failCallback) {
+            rest.before(arguments);
+            if ('function' === typeof(data)) {
+                failCallback = okCallback;
+                okCallback = data;
+                data = {};
+            }
+            $.getJSON(url, data, function(){
+                okCallback(arguments);
+                rest.after(arguments);
+            });
+        };
+        rest.post = rest.put = rest.del = rest.get;
+    } else {
+        var len =  rest.methods.length;
+        for (var i = 0; i < len; i++) {
+            (function(){
+                var methodName = rest.methods[i];
+                rest[methodName] = function(url, data, okCallback, failCallback) {
+                    if ('function' === typeof(data)) {
+                        failCallback = okCallback;
+                        okCallback = data;
+                        data = {};
+                    }
+                    ('del' === methodName) && (methodName = 'delete');
+                    if (!failCallback) {
+                        failCallback = function() {
+                            console.error(arguments);
+                        };
+                    }
+                    rest.before(arguments);
+                    $.ajax({
+                        dataType: 'json',
+                        type: methodName,
+                        url: url,
+                        data: data,
+                        success: okCallback,
+                        fail: failCallback,
+                        complete: rest.after
+                    });
+                };
+            })();
+        }
+    }
+
+    w.rest = rest;
+})(window);
