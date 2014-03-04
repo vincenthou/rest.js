@@ -58,5 +58,13 @@
         }
     }
 
-    w.rest = rest;
+    if ( typeof define === "function") {
+        if (define.amd || define.cmd) {
+            define('rest', [], function() {
+                return rest;
+            });
+        }
+    } else {
+        w.rest = rest;
+    }
 })(window);
